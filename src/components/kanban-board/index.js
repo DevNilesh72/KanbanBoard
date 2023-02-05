@@ -2,7 +2,7 @@ import React from "react";
 import "./index.css";
 
 export default function KanbanBoard(props) {
-  const newTask = React.useRef(0);
+  const [newTask, setNewTask] = React.useState("");
 
   const [tasks, setTasks] = React.useState([
     { name: "1", stage: 0 },
@@ -20,29 +20,28 @@ export default function KanbanBoard(props) {
 
   const stagesTasks = React.useMemo(() => {
     let stages = Array.from({ length: stagesNames.length }, (e) => Array(0));
-    tasks.map((e) => {
-      stages[e.stage].push(e);
+    tasks.map((e, index) => {
+      stages[e.stage].push({ ...e, id: index });
     });
 
     return stages;
   }, [tasks]);
 
   function createTask() {
-    if (newTask.current.value !== "") {
-      setTasks((prev) => [...prev, { name: newTask.current.value, stage: 0 }]);
+    if (newTask !== "") {
+      setTasks((prev) => [...prev, { name: newTask, stage: 0 }]);
+      setNewTask("");
     }
   }
 
-  function deleteTask(name) {
-    setTasks((prev) => prev.filter((e) => e.name !== name));
+  function deleteTask(id) {
+    setTasks((prev) => prev.filter((e, index) => index !== id));
   }
 
-  function incTask(name) {
-    let id = tasks.findIndex((e) => e.name == name);
+  function incTask(id) {
     setTasks((prev) => {
       if (prev[id].stage < stagesNames.length - 1) {
         prev[id].stage++;
-        console.log(prev);
         return [...prev];
       } else {
         return prev;
@@ -50,12 +49,10 @@ export default function KanbanBoard(props) {
     });
   }
 
-  function decTask(name) {
-    let id = tasks.findIndex((e) => e.name == name);
+  function decTask(id) {
     setTasks((prev) => {
       if (prev[id].stage > 0) {
         prev[id].stage--;
-        console.log(prev);
         return [...prev];
       } else {
         return prev;
@@ -72,7 +69,8 @@ export default function KanbanBoard(props) {
           className="large"
           placeholder="New task name"
           data-testid="create-task-input"
-          ref={newTask}
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)}
         />
         <button
           type="submit"
@@ -108,7 +106,7 @@ export default function KanbanBoard(props) {
                               data-testid={`${task.name
                                 .split(" ")
                                 .join("-")}-back`}
-                              onClick={() => decTask(task.name)}
+                              onClick={() => decTask(task.id)}
                             >
                               <i className="material-icons">arrow_back</i>
                             </button>
@@ -117,7 +115,7 @@ export default function KanbanBoard(props) {
                               data-testid={`${task.name
                                 .split(" ")
                                 .join("-")}-forward`}
-                              onClick={() => incTask(task.name)}
+                              onClick={() => incTask(task.id)}
                             >
                               <i className="material-icons">arrow_forward</i>
                             </button>
@@ -126,7 +124,7 @@ export default function KanbanBoard(props) {
                               data-testid={`${task.name
                                 .split(" ")
                                 .join("-")}-delete`}
-                              onClick={() => deleteTask(task.name)}
+                              onClick={() => deleteTask(task.id)}
                             >
                               <i className="material-icons">delete</i>
                             </button>
