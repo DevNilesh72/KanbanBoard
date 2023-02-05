@@ -1,6 +1,11 @@
 # React: Kanban Board
 
+# App Demo
+![React App](https://user-images.githubusercontent.com/61541666/216821259-f455f21b-4fd6-4163-a42e-3074a4c16ff5.gif)
+
+
 ## Functionality Requirements
+
 
 - The board contains 4 stages of tasks in sequence - 'Backlog', 'To Do', 'Ongoing' and 'Done'.
 
